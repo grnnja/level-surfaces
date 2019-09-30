@@ -9,7 +9,7 @@ include <./marching-cubes.scad>
 // }
 
 
-bounds = 2;
+bounds = 3;
 
 resolution = 0.5;
 
@@ -68,9 +68,9 @@ function sumVector(list, c = 0) =
  :
  list[c];
 
-for( i = [-bounds : resolution : bounds]) {
-  for( j = [-bounds : resolution : bounds]) {
-    for( k = [-bounds : resolution : bounds]) {
+for( i = [-bounds : resolution : bounds - resolution]) {
+  for( j = [-bounds : resolution : bounds - resolution]) {
+    for( k = [-bounds : resolution : bounds - resolution]) {
       // if (f([i, j, k]) > threshold) {
       // each of the eight points to check
       cubePoints = [
@@ -92,7 +92,7 @@ for( i = [-bounds : resolution : bounds]) {
       // If i knew how to i would like to just loop over each element and add it
       // to a variable but openscad is dumb and idk how
       permutationNumberList = [for (k = [0 : 1 : 7]) 
-        f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) > threshold ? pow(k,2) : 0
+        f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) > threshold ? pow(2, k) : 0
       ];
 
       permutationNumber = sumVector(permutationNumberList);
