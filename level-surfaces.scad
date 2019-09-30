@@ -103,9 +103,19 @@ for( i = [-bounds : resolution : bounds]) {
       //   }
       // }
 
-      triangleColor = [sin((i + bounds) / bounds * 45), sin((j + bounds) / bounds * 45), sin((bounds - k) / bounds * 45)];
+      // triangleColor = [sin((i + bounds) / bounds * 45), sin((j + bounds) / bounds * 45), sin((bounds - k) / bounds * 45)];
+      
+      // have 45 degrees for which each color is on
+      // blue is at bottom, green in middle, red on top, like other graphs online
+      // go from - bounds to bounds then divide by 2 so range is 1 then multiply number
 
-      echo(triangleColor);
+    hueModifier = 0.1;
+
+      triangleColor = [
+        min(max(sin((k + bounds) / bounds * 90 - 90) + hueModifier, 0), 1),
+        min(max(sin((k + bounds) / bounds * 90), 0) + hueModifier, 1),
+        min(max(sin((k + bounds) / bounds * 90 + 90) + hueModifier, 0), 1)
+      ];
 
       drawMarchingCube(permutationNumber, edgePoints, [i, j, k], resolution, triangleColor);
       // }
