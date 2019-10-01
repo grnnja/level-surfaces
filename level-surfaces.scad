@@ -9,7 +9,7 @@ include <./marching-cubes.scad>
 // }
 
 
-bounds = 3;
+bounds = 4.5;
 
 resolution = 0.5;
 
@@ -29,7 +29,7 @@ resolution = 0.5;
 //   faces=[ [0,1,4] ]                         // two triangles for square base
 //  );
 
-function f(x, y, z) = pow(x, 2) + pow(y, 2) - z;
+function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 9;
 
 // for(i = [-bounds:0.1:bounds]) {
 //   for(j = [-bounds:0.1:bounds]) {
@@ -60,7 +60,7 @@ edgePoints = [
 
 // number = 162;
 
-threshold = 2;
+threshold = 0;
 
 function sumVector(list, c = 0) = 
  c < len(list) - 1 ? 
@@ -92,7 +92,7 @@ for( i = [-bounds : resolution : bounds - resolution]) {
       // If i knew how to i would like to just loop over each element and add it
       // to a variable but openscad is dumb and idk how
       permutationNumberList = [for (k = [0 : 1 : 7]) 
-        f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) > threshold ? pow(2, k) : 0
+        f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) >= threshold ? pow(2, k) : 0
       ];
 
       permutationNumber = sumVector(permutationNumberList);
@@ -109,7 +109,7 @@ for( i = [-bounds : resolution : bounds - resolution]) {
       // blue is at bottom, green in middle, red on top, like other graphs online
       // go from - bounds to bounds then divide by 2 so range is 1 then multiply number
 
-    hueModifier = 0.1;
+      hueModifier = 0.1;
 
       triangleColor = [
         min(max(sin((k + bounds) / bounds * 90 - 90) + hueModifier, 0), 1),
@@ -122,11 +122,6 @@ for( i = [-bounds : resolution : bounds - resolution]) {
     }
   }
 }
-
-
-
-
-
 
 // currentPoints = points[search(number, edges)[0]];
 
