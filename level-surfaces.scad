@@ -1,3 +1,8 @@
+/**
+* premise is that we iterate over each location then evaluate if the points should exist on corners of
+* cube at the location then use drawMarchingCube to render each cube
+*/
+
 include <./marching-cubes.scad>
 
 // function x(t) = pow(t, 2);
@@ -11,7 +16,7 @@ include <./marching-cubes.scad>
 
 bounds = 4.5;
 
-resolution = 0.5;
+resolution = 0.1;
 
 // function f(x, y) = pow(x, 2) + pow(y, 2);
 
@@ -29,7 +34,7 @@ resolution = 0.5;
 //   faces=[ [0,1,4] ]                         // two triangles for square base
 //  );
 
-function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 9;
+function f(x, y, z) = pow(x, 2) + pow(y, 2) - z - 4.5;
 
 // for(i = [-bounds:0.1:bounds]) {
 //   for(j = [-bounds:0.1:bounds]) {
@@ -68,31 +73,49 @@ function sumVector(list, c = 0) =
  :
  list[c];
 
-for( i = [-bounds : resolution : bounds - resolution]) {
-  for( j = [-bounds : resolution : bounds - resolution]) {
-    for( k = [-bounds : resolution : bounds - resolution]) {
+// TODO: calculate all points, store in memory then look up?
+// would calculate each point once instead of 8 times
+
+allPointsValues = [
+  for( i = [-bounds : resolution : bounds + resolution]) [
+    for( j = [-bounds : resolution : bounds + resolution]) [
+      for( k = [-bounds : resolution : bounds + resolution])
+        f(i, j, k)
+    ]
+  ]
+];
+
+for( i = [0 : 1 : 2 * bounds / resolution - 1]) {
+  for( j = [0 : 1 : 2 * bounds / resolution - 1]) {
+    for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
       // if (f([i, j, k]) > threshold) {
       // each of the eight points to check
+
       cubePoints = [
         [i, j, k],
-        [i, j + resolution, k],
-        [i + resolution, j + resolution, k],
-        [i + resolution, j, k],
-        [i, j, k + resolution],
-        [i, j + resolution, k + resolution],
-        [i + resolution, j + resolution, k + resolution],
-        [i + resolution, j, k + resolution]
+        [i, j + 1, k],
+        [i + 1, j + 1, k],
+        [i + 1, j, k],
+        [i, j, k + 1],
+        [i, j + 1, k + 1],
+        [i + 1, j + 1, k + 1],
+        [i + 1, j, k + 1]
       ];
       
       // idk how else to do this
       // we need to figue which permuation of triangles we need
       // so i loop through each element in cubePoints and find if it is big enough
       // then i add the index of the element to the power of 2 to the element of
-      // permuationNumberList. Then I add all the elements in the list
+      // permutationNumberList. Then I add all the elements in the list
       // If i knew how to i would like to just loop over each element and add it
       // to a variable but openscad is dumb and idk how
+
+      // permutationNumberList = [for (k = [0 : 1 : 7]) 
+      //   f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) >= threshold ? pow(2, k) : 0
+      // ];
+
       permutationNumberList = [for (k = [0 : 1 : 7]) 
-        f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) >= threshold ? pow(2, k) : 0
+        allPointsValues[cubePoints[k][0]][cubePoints[k][1]][cubePoints[k][2]] >= threshold ? pow(2, k) : 0
       ];
 
       permutationNumber = sumVector(permutationNumberList);
@@ -109,15 +132,16 @@ for( i = [-bounds : resolution : bounds - resolution]) {
       // blue is at bottom, green in middle, red on top, like other graphs online
       // go from - bounds to bounds then divide by 2 so range is 1 then multiply number
 
+      // hueModifier makes the colors lighter the higher the value is
       hueModifier = 0.1;
 
       triangleColor = [
-        min(max(sin((k + bounds) / bounds * 90 - 90) + hueModifier, 0), 1),
-        min(max(sin((k + bounds) / bounds * 90), 0) + hueModifier, 1),
-        min(max(sin((k + bounds) / bounds * 90 + 90) + hueModifier, 0), 1)
+        min(max(sin(k / bounds * resolution * 90 - 90) + hueModifier, 0), 1),
+        min(max(sin(k / bounds * resolution * 90), 0) + hueModifier, 1),
+        min(max(sin(k / bounds * resolution * 90 + 90) + hueModifier, 0), 1)
       ];
 
-      drawMarchingCube(permutationNumber, edgePoints, [i, j, k], resolution, triangleColor);
+      drawMarchingCube(permutationNumber, edgePoints, [i * resolution - bounds, j * resolution - bounds, k * resolution - bounds], resolution, triangleColor);
       // }
     }
   }

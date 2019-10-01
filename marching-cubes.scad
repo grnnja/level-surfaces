@@ -262,25 +262,24 @@
     []
   ];
 
-module drawMarchingCube (number, edgePoints, position, size = 1, triangleColor = [0, 0, 0]) {
+module drawMarchingCube (number, edgePoints, position, size = 1, triangleColor = [1, 1, 1]) {
+  // get points of triangle that we are going to draw
   currentPoints = points[number];
-  
-  // need to convert so that each polyhedron is one horizontal slice
 
-  // loop through each triangle and draw
-  for (i = [0 : 1 : len(currentPoints) - 1]) {
-    // turns the edges from the long list into actual points from edgePoints
-    currentTriangle = [
-      for (j = [0 : 2]) edgePoints[currentPoints[i][j]] * size
-    ];
+  if (currentPoints) {
+    // loop through each triangle in currentPoints and draw
+    for (i = [0 : 1 : len(currentPoints) - 1]) {
+      // turns the edges from currentPoints into actual points from edgePoints and multiply by size
+      currentTriangle = [
+        for (j = [0 : 2]) edgePoints[currentPoints[i][j]] * size + position
+      ];
 
-    translate(position) {
       color(triangleColor) {
         polyhedron (
           points = currentTriangle,
           faces = [[0, 1, 2]]
         );
-        }
       }
+    }
   }
 }
