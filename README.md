@@ -4,7 +4,7 @@
 Level surfaces helps you graph and understand 3D functions. You can not only render 3D functions, but you can export surfaces to STL files. 
 
 ### Demo
-![frame00001](https://user-images.githubusercontent.com/31556469/65884286-6f409080-e34d-11e9-9bd7-165b5f9274c7.png)
+![frame00001](https://user-images.githubusercontent.com/31556469/67651733-86987c80-f8ff-11e9-9bec-b753b0f5782d.png)
 
 
 ## FAQ
