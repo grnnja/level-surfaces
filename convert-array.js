@@ -146,7 +146,7 @@ console.log((() => {
  */
 const size = 10;
 const allPointsValues = [[[-20, -20, -20], [-10, -10, -10], [0, 0, 0]], [[-10, -10, -10], [0, 0, 0], [10, 10, 10]], [[0, 0, 0], [10, 10, 10], [20, 20, 20]]]
-const i = 0;
+const i = 1;
 const j = 0;
 const k = 0;
 
@@ -172,7 +172,7 @@ console.log((() => {
           let temp = [];
           for(var n = 0; n <= 2; n++) {
             // i derived this equation using point slope form
-            if (positionTwo[n] - positionOne[n] === 1){
+            if (positionTwo[n] - positionOne[n] === 1) {
               temp.push(valueOne * size / (valueOne - valueTwo))
             } else if (positionOne[n] === 1) {
               temp.push(size);
@@ -192,5 +192,5 @@ console.log((() => {
   console.log("  ", output[m + 4 * l])
     }
   }
-  // return(output);
+  return(output);
 })());

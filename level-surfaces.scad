@@ -37,10 +37,12 @@ interpolation = true;
 //  );
 
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 20;
-function f(x, y, z) = pow(x, 2) - pow(y, 2) - z;
+// function f(x, y, z) = pow(x, 2) - pow(y, 2) - z;
 
 // function f(x, y, z) = x + y + 0;
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) - z- 5;
+
+function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 10 + 20 * $t;
 
 // for(i = [-bounds:0.1:bounds]) {
 //   for(j = [-bounds:0.1:bounds]) {
