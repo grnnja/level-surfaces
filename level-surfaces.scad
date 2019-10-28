@@ -16,7 +16,7 @@ include <./marching-cubes.scad>
 
 bounds = 5;
 
-resolution = 2.5;
+resolution = 0.5;
 
 interpolation = true;
 
@@ -36,10 +36,11 @@ interpolation = true;
 //   faces=[ [0,1,4] ]                         // two triangles for square base
 //  );
 
-// function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 20.25;
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 20;
 function f(x, y, z) = pow(x, 2) - pow(y, 2) - z;
 
 // function f(x, y, z) = x + y + 0;
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) - z- 5;
 
 // for(i = [-bounds:0.1:bounds]) {
 //   for(j = [-bounds:0.1:bounds]) {
@@ -70,8 +71,6 @@ edgePoints = [
 
 // number = 162;
 
-threshold = 0;
-
 function sumVector(list, c = 0) =
  c < len(list) - 1 ?
  list[c] + sumVector(list, c + 1) 
@@ -80,7 +79,6 @@ function sumVector(list, c = 0) =
 
 // TODO: calculate all points, store in memory then look up?
 // would calculate each point once instead of 8 times
-
 
 // + resolution?
 allPointsValues = [
@@ -100,7 +98,7 @@ allPointsValues = [
 //       echo ((ii + bounds) / resolution);
 //       echo(allPointsValues[(ii + bounds) / resolution ][(jj + bounds) / resolution][(kk + bounds) / resolution]);
 //       translate([ii, jj, kk]) {
-//         text(text = str((allPointsValues[(ii + bounds) / resolution][(jj + bounds) / resolution][(kk + bounds) / resolution])), size = 2);
+//         text(text = str((allPointsValues[(ii + bounds) / resolution][(jj + bounds) / resolution][(kk + bounds) / resolution])), size = 1);
 //       }
 //     }
 //   }
@@ -109,9 +107,11 @@ allPointsValues = [
 // echo("all points values");
 // echo(allPointsValues);
 
-#translate([0, -10, -10]) {
-  cube(10);
-}
+
+// debugging cube
+// #translate([0, -10, -10]) {
+//   cube(10);
+// }
 
 
 // z on outer loop so only have to calculatre trianle color once per z
@@ -161,8 +161,10 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
       //   f(cubePoints[k][0], cubePoints[k][1], cubePoints[k][2]) >= threshold ? pow(2, k) : 0
       // ];
 
+
+      // if less than or equal to zero, then inside the surface
       permutationNumberList = [for (k = [0 : 1 : 7])
-        allPointsValues[cubePoints[k][0]][cubePoints[k][1]][cubePoints[k][2]] <= threshold ? pow(2, k) : 0
+        allPointsValues[cubePoints[k][0]][cubePoints[k][1]][cubePoints[k][2]] <= 0 ? pow(2, k) : 0
       ];
 
       permutationNumber = sumVector(permutationNumberList);
@@ -198,8 +200,10 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
                 let (positionTwo = [positionOne[0] + ((l == 0) ? 1 : 0), positionOne[1] + ((l == 1) ? 1 : 0), positionOne[2] + ((l == 2) ? 1 : 0)])
                 let (valueOne = allPointsValues[positionOne[0]][positionOne[1]][positionOne[2]])
                 let (valueTwo = allPointsValues[positionTwo[0]][positionTwo[1]][positionTwo[2]])
+                // if either valueOne is zero or valueTwo is zero, we want to send it into the loop
+                // because the loop will interpolate to zero
                 // check if two points have opposite signs because that is when there is a point on the edge
-                  if ( valueOne == 0 || valueTwo == 0 || (valueOne < 0) ? (valueTwo > 0) : (valueTwo < 0)) (
+                  if ( valueOne == 0 || valueTwo == 0 || ((valueOne < 0) ? (valueTwo > 0) : (valueTwo < 0))) (
                   // this if might never be called
                   if (valueOne == valueTwo) (
                     // edgePoints[(l * 4 + m)]
@@ -220,8 +224,8 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
                   ]
                 ) else (
                   // this needs parens, idk why
-                  // edgePoints[(l * 4 + m)]  
-                  0               
+                  // edgePoints[(l * 4 + m)]
+                  0           
                 )
               )
             )
@@ -232,6 +236,7 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
           // echo(allPointsValues[i + 1][j][k]);
           // echo(interpolatedEdgePoints);
           // i used the script in convert-array.js to help figure out which points go where
+          // messy
           remappedInterpolatedEdgePoints = [
             interpolatedEdgePoints[4],
             interpolatedEdgePoints[2],
