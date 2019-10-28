@@ -14,9 +14,9 @@ include <./marching-cubes.scad>
 // }
 
 
-bounds = 4.5;
+bounds = 5;
 
-resolution = 0.5;
+resolution = 2.5;
 
 interpolation = true;
 
@@ -36,7 +36,10 @@ interpolation = true;
 //   faces=[ [0,1,4] ]                         // two triangles for square base
 //  );
 
-function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 20.25;
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 20.25;
+function f(x, y, z) = pow(x, 2) - pow(y, 2) - z;
+
+// function f(x, y, z) = x + y + 0;
 
 // for(i = [-bounds:0.1:bounds]) {
 //   for(j = [-bounds:0.1:bounds]) {
@@ -78,14 +81,37 @@ function sumVector(list, c = 0) =
 // TODO: calculate all points, store in memory then look up?
 // would calculate each point once instead of 8 times
 
+
+// + resolution?
 allPointsValues = [
-  for( i = [-bounds : resolution : bounds + resolution]) [
-    for( j = [-bounds : resolution : bounds + resolution]) [
-      for( k = [-bounds : resolution : bounds + resolution])
+  for( i = [-bounds : resolution : bounds]) [
+    for( j = [-bounds : resolution : bounds]) [
+      for( k = [-bounds : resolution : bounds])
         f(i, j, k)
     ]
   ]
 ];
+
+// numbers at each vertex
+// for debugging
+// for( ii = [-bounds : resolution : bounds]) {
+//   for( jj = [-bounds : resolution : bounds]) {
+//     for( kk = [-bounds : resolution : bounds]) {
+//       echo ((ii + bounds) / resolution);
+//       echo(allPointsValues[(ii + bounds) / resolution ][(jj + bounds) / resolution][(kk + bounds) / resolution]);
+//       translate([ii, jj, kk]) {
+//         text(text = str((allPointsValues[(ii + bounds) / resolution][(jj + bounds) / resolution][(kk + bounds) / resolution])), size = 2);
+//       }
+//     }
+//   }
+// }   
+
+// echo("all points values");
+// echo(allPointsValues);
+
+#translate([0, -10, -10]) {
+  cube(10);
+}
 
 
 // z on outer loop so only have to calculatre trianle color once per z
@@ -165,26 +191,38 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
         // writing out all twelve permutations was definitely easier than what i did
         if (interpolation) {
           interpolatedEdgePoints = [
-          for (l = [0 : 1 : 2])
-            // alternate m so that we get all four sides
-            for(m = [0 : 1 : 3]) (
-              let (positionOne = [(l == 0) ? i : ((l == 1) ? i + m % 2 : i + (m >= 2 ? 1 : 0)), (l == 1) ? j : ((l == 0) ? j + ((m >= 2) ? 1 : 0) : j + m % 2), (l == 2) ? k : ((l == 0) ? k + m % 2 : k + (m >= 2 ? 1 : 0))])
-              let (positionTwo = [positionOne[0] + ((l == 0) ? 1 : 0), positionOne[1] + ((l == 1) ? 1 : 0), positionOne[2] + ((l != 2) ? 1 : 0)])
-              let (valueOne = allPointsValues[positionOne[0]][positionOne[1]][positionOne[2]])
-              let (valueTwo = allPointsValues[positionTwo[0]][positionTwo[1]][positionTwo[2]])
-              // check if two points have opposite signs because that is when there is a point on the edge
-              if ((valueOne < 0) ? (valueTwo > 0) : (valueTwo < 0)) (
-                if(valueOne == valueTwo) (
-                  edgePoints[l * 4 + m]
-                ) else [
-                  for(n = [0 : 1 : 2])
-                    // linear interpolation equation: P = P1 + (0.5 — V1) (P2 — P1) / (V2 — V1)
-                    // P1 is always 0 and P2 is always one so i simplified
-                    1-((0.5 - valueOne) / (valueTwo - valueOne))
-                ]
-              ) else (
-                // edgePoints[l * 4 + m]
-                0
+            for (l = [0 : 1 : 2]) (
+              // alternate m so that we get all four sides
+              for(m = [0 : 1 : 3]) (
+                let (positionOne = [(l == 0) ? i : ((l == 1) ? i + m % 2 : i + (m >= 2 ? 1 : 0)), (l == 1) ? j : ((l == 0) ? j + ((m >= 2) ? 1 : 0) : j + m % 2), (l == 2) ? k : ((l == 0) ? k + m % 2 : k + (m >= 2 ? 1 : 0))])
+                let (positionTwo = [positionOne[0] + ((l == 0) ? 1 : 0), positionOne[1] + ((l == 1) ? 1 : 0), positionOne[2] + ((l == 2) ? 1 : 0)])
+                let (valueOne = allPointsValues[positionOne[0]][positionOne[1]][positionOne[2]])
+                let (valueTwo = allPointsValues[positionTwo[0]][positionTwo[1]][positionTwo[2]])
+                // check if two points have opposite signs because that is when there is a point on the edge
+                  if ( valueOne == 0 || valueTwo == 0 || (valueOne < 0) ? (valueTwo > 0) : (valueTwo < 0)) (
+                  // this if might never be called
+                  if (valueOne == valueTwo) (
+                    // edgePoints[(l * 4 + m)]
+                    0
+                  ) else [
+                    for(n = [0 : 1 : 2]) (
+                      // if on axis that is changing, then do interpolation
+                      if (positionTwo[n] - positionOne[n] == 1) (
+                        // i derived this equation using point slope form
+                        valueOne * size / (valueOne - valueTwo)
+                      // if edge is in positive direction, add size
+                      ) else if (positionOne[n] != [i, j, k][n]) (
+                        size
+                      ) else (
+                        0
+                      )
+                    )
+                  ]
+                ) else (
+                  // this needs parens, idk why
+                  // edgePoints[(l * 4 + m)]  
+                  0               
+                )
               )
             )
           ];
@@ -208,15 +246,38 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
             interpolatedEdgePoints[11],
             interpolatedEdgePoints[10],
           ];
-          echo(remappedInterpolatedEdgePoints);
+          echo(interpolatedEdgePoints);
+          // if (i + 2 * j + 4 * k == 1) {
+          //   for(h = [0 : 1 : 11]) {
+          //     if (remappedInterpolatedEdgepoints[h] != 0) {
+          //       red = h<4?h/3:1;
+          //       green = h>3 && h<8?(h-4)/3:1;
+          //       blue = h>7?(h-8)/3:1;
+          //       echo("h");
+          //       echo(h);
+          //       echo([red, green, blue]);
+          //       translate(position) {
+          //         translate(remappedInterpolatedEdgePoints[h]) {
+          //           color([red, green, blue]) {
+          //             sphere(1);
+          //           }
+          //         }
+          //       }
+          //     }
+          //   }
+          // }
 
           // copying and pasting code is bad but putting this in a module slows down render time
           // loop through each triangle in currentPoints and draw
           for (i = [0 : 1 : len(currentPoints) - 1]) {
+            // echo("position");
+            // echo(position);
             // turns the edges from currentPoints into actual points from edgePoints and multiply by size
             currentTriangle = [
-              for (j = [0 : 2]) remappedInterpolatedEdgePoints[currentPoints[i][j]] * size + position
+              for (j = [0 : 2]) remappedInterpolatedEdgePoints[currentPoints[i][j]] + position
             ];
+          
+            // echo("triangle");
             // echo(currentTriangle);
             color(triangleColor) {
               polyhedron (
@@ -233,7 +294,6 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
             currentTriangle = [
               for (j = [0 : 2]) edgePoints[currentPoints[i][j]] * size + position
             ];
-
             color(triangleColor) {
               polyhedron (
                 points = currentTriangle,
