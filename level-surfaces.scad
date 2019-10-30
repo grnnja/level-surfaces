@@ -5,56 +5,45 @@
 
 include <./marching-cubes.scad>
 
-// function x(t) = pow(t, 2);
+// TODO: add support for multiple functions, lines, and points
 
-// for(i = [-10:0.1:10]) {
-//   translate([i, x(i), 0]) {
-//     circle(.1);
-//   }
-// }
+bounds = 1.05;
 
-
-bounds = 5;
-
-resolution = 0.5;
+resolution = 0.05;
 
 interpolation = true;
 
-// function f(x, y) = pow(x, 2) + pow(y, 2);
+// the following are functions set to work with a bounds of 5 and a resolution of 0.5
 
-// for(i = [-bounds:0.1:bounds]) {
-//   for(j = [-bounds:0.1:bounds]) {
-//     translate([i, j, f(i, j)]) {
-//       sphere(.1);
-//     }
-//   }
-// }
+// cylinder
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) - 25;
 
-// polyhedron(
-//   points=[ [10,10,0],[10,-10,0],[-10,-10,0],[-10,10,0], // the four points at base
-//            [0,0,10]  ],                                 // the apex point 
-//   faces=[ [0,1,4] ]                         // two triangles for square base
-//  );
+// sphere
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 25;
 
-// function f(x, y, z) = pow(x, 2) + pow(y, 2) + pow(z, 2) - 20;
+// hyperbolic paraboloid
 // function f(x, y, z) = pow(x, 2) - pow(y, 2) - z;
 
-// function f(x, y, z) = x + y + 0;
+// plane
+// function f(x, y, z) = x + y + z + 0;
+
+// paraboloid
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) - z- 5;
 
-function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 10 + 20 * $t;
+// hyperbola of one sheet -> hyperbola of two sheets
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 10 + 20 * $t;
 
-// for(i = [-bounds:0.1:bounds]) {
-//   for(j = [-bounds:0.1:bounds]) {
-//     for(k = [-bounds:0.1:bounds]) {
-//       if (f(i, j, k) > 2) {
-//         translate([i, j, k]) {
-//           sphere(.1);
-//         }
-//       }
-//     }
-//   }
-// }
+// hyperbola of two sheets
+// function f(x, y, z) = pow(x, 2) - pow(y, 2) - pow(z, 2) - 5;
+// cone
+// function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2);
+
+// repeating connected bulbs
+// function f(x, y, z) = cos(x * 180 / 3.14 * 2) + cos(y * 180 / 3.14 * 2) + cos(z * 180 / 3.14 * 2);
+
+// Steiner's Roman Surface
+// bounds of 1.05 and resolution of 0.05
+function f(x, y, z) = pow(x, 2) * pow(y, 2) + pow(y, 2) * pow(z, 2) + pow(z,2) * pow(x, 2) - 2 *  x * y * z;
 
 edgePoints = [
   [0, 0.5, 0],
@@ -253,7 +242,8 @@ for( k = [0 : 1 : 2 * bounds / resolution - 1]) {
             interpolatedEdgePoints[11],
             interpolatedEdgePoints[10],
           ];
-          echo(interpolatedEdgePoints);
+          //echo(interpolatedEdgePoints);
+
           // if (i + 2 * j + 4 * k == 1) {
           //   for(h = [0 : 1 : 11]) {
           //     if (remappedInterpolatedEdgepoints[h] != 0) {
