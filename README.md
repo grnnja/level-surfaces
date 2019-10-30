@@ -7,7 +7,7 @@ Level surfaces helps you graph and understand 3D functions. You can not only ren
 ![frame00001](https://user-images.githubusercontent.com/31556469/67651733-86987c80-f8ff-11e9-9bec-b753b0f5782d.png)
 ![hypberbolalq](https://user-images.githubusercontent.com/31556469/67654150-d2502380-f909-11e9-86e8-9986d2392e27.gif)
 
-### Making Animations
+## Making Animations
 
 1. Add $t to f(x, y, z)
     * $t varies from 0 to 1 over the course of the animation
