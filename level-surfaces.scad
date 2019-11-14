@@ -3,13 +3,13 @@
 * cube at the location then use drawMarchingCube to render each cube
 */
 
-include <./marching-cubes.scad>
+include <./point-list.scad>
 
 // TODO: add support for multiple functions, lines, and points
 
-bounds = 1.05;
+bounds = 5;
 
-resolution = 0.05;
+resolution = 0.5;
 
 interpolation = true;
 
@@ -34,16 +34,20 @@ interpolation = true;
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 10 + 20 * $t;
 
 // hyperbola of two sheets
-// function f(x, y, z) = pow(x, 2) - pow(y, 2) - pow(z, 2) - 5;
+function f(x, y, z) = pow(x, 2) - pow(y, 2) - pow(z, 2) - 5;
+
 // cone
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2);
 
 // repeating connected bulbs
 // function f(x, y, z) = cos(x * 180 / 3.14 * 2) + cos(y * 180 / 3.14 * 2) + cos(z * 180 / 3.14 * 2);
 
+// repeating connected bulbs over time
+// function f(x, y, z) = cos(x * 180 / 3.14 * 2) + cos(y * 180 / 3.14 * 2) + cos(z * 180 / 3.14 * 2) -3.14 + 6.28 * $t;
+
 // Steiner's Roman Surface
 // bounds of 1.05 and resolution of 0.05
-function f(x, y, z) = pow(x, 2) * pow(y, 2) + pow(y, 2) * pow(z, 2) + pow(z,2) * pow(x, 2) - 2 *  x * y * z;
+// function f(x, y, z) = pow(x, 2) * pow(y, 2) + pow(y, 2) * pow(z, 2) + pow(z,2) * pow(x, 2) - 2 *  x * y * z;
 
 edgePoints = [
   [0, 0.5, 0],
