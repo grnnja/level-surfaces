@@ -30,10 +30,10 @@ interpolation = true;
 // paraboloid
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) - z- 5;
 
-// hyperbola of one sheet -> hyperbola of two sheets
+// hyperboloid of one sheet -> hyperboloid of two sheets
 // function f(x, y, z) = pow(x, 2) + pow(y, 2) - pow(z, 2) - 10 + 20 * $t;
 
-// hyperbola of two sheets
+// hyperboloid of two sheets
 function f(x, y, z) = pow(x, 2) - pow(y, 2) - pow(z, 2) - 5;
 
 // cone
