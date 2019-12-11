@@ -1,7 +1,7 @@
 
-// number is the index in the points vector which corresponds to the decimal value
+// Number is the index in the points vector which corresponds to the decimal value
 // of the sides if you convert from binary for which ones are active on a 1 by 1 by 1
-// edge points is the location of where the points should be on the edge
+// Edge points is the location of where the points should be on the edge
 
 
   points = [ [],
