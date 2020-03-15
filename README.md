@@ -1,7 +1,6 @@
 # Level Surfaces: an OpenSCAD based 3D surface grapher
-## with special 3D printing functionality
 
-Level surfaces helps you graph and understand 3D functions. You can not only render 3D functions, but you can export surfaces to STL files. 
+Level surfaces utilizesw the rendering capabilities of the 3D modeling language [OpenSCAD](https://www.openscad.org/) to graph any implicit surface as well as level surfaces over time.
 
 ### Demo
 ![frame00001](https://user-images.githubusercontent.com/31556469/67651733-86987c80-f8ff-11e9-9bec-b753b0f5782d.png)
@@ -22,6 +21,7 @@ Level surfaces helps you graph and understand 3D functions. You can not only ren
 4. Set steps to the number frames you want
 5. Wait to complete rendering
     * OpenSCAD will output a series of images into the same folder as level-surfaces.scad
+    * This can take minutes or hours depending on the computer and render quality
 6. To turn the images into a gif or video
     * Use an online [png to gif converter](https://ezgif.com/apng-to-gif)
     * Or use [ffmpeg](https://www.ffmpeg.org/) with a command similar to: `ffmpeg -framerate 60 -i frame%05d.png video-name.gif`
