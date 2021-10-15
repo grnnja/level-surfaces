@@ -1,6 +1,6 @@
 # Level Surfaces: an OpenSCAD based 3D surface grapher
 
-Level surfaces utilizesw the rendering capabilities of the 3D modeling language [OpenSCAD](https://www.openscad.org/) to graph any implicit surface as well as level surfaces over time.
+Level surfaces utilizes the rendering capabilities of the 3D modeling language [OpenSCAD](https://www.openscad.org/) to graph any implicit surface as well as level surfaces over time.
 
 ### Demo
 ![frame00001](https://user-images.githubusercontent.com/31556469/67651733-86987c80-f8ff-11e9-9bec-b753b0f5782d.png)
